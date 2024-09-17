@@ -1,0 +1,82 @@
+service: bonz-booking-api
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-north-1
+  stage: dev
+
+functions:
+  createBooking:
+    handler: handler.createBooking
+    events:
+      - httpApi:
+          path: /bookings
+          method: post
+
+  getBooking:
+    handler: handler.getBooking
+    events:
+      - httpApi:
+          path: /bookings/{id}
+          method: get
+
+  cancelBooking:
+    handler: handler.cancelBooking
+    events:
+      - httpApi:
+          path: /bookings/{id}/cancel
+          method: post
+
+  updateBooking:
+    handler: handler.updateBooking
+    events:
+      - httpApi:
+          path: /bookings/{id}
+          method: put
+
+  listBookings:
+    handler: handler.listBookings
+    events:
+      - httpApi:
+          path: /bookings
+          method: get
+
+  listRooms:
+    handler: handler.listRooms
+    events:
+      - httpApi:
+          path: /rooms
+          method: get
+
+resources:
+  Resources:
+    BookingsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: bookings
+        AttributeDefinitions:
+          - AttributeName: bookingId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: bookingId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    RoomsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: rooms
+        AttributeDefinitions:
+          - AttributeName: roomType
+            AttributeType: S
+        KeySchema:
+          - AttributeName: roomType
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
