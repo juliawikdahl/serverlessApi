@@ -28,7 +28,7 @@ functions:
     events:
       - httpApi:
           path: /bookings/{id}/cancel
-          method: post
+          method: delete
 
   updateBooking:
     handler: handler.updateBooking
@@ -51,6 +51,9 @@ functions:
           path: /rooms
           method: get
 
+plugins:
+  - serverless-offline
+
 resources:
   Resources:
     BookingsTable:
@@ -59,6 +62,8 @@ resources:
         TableName: bookings
         AttributeDefinitions:
           - AttributeName: bookingId
+            AttributeType: S
+          - AttributeName: roomType
             AttributeType: S
         KeySchema:
           - AttributeName: bookingId
