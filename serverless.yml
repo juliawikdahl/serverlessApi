@@ -1,12 +1,23 @@
-service: bonz-booking-api
+service: bonz-booking-api # Namn på tjänsten
 
-frameworkVersion: "3"
+frameworkVersion: '3' # Specificera versionen av Serverless Framework
 
 provider:
   name: aws
   runtime: nodejs18.x
   region: eu-north-1
   stage: dev
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:DeleteItem
+        - dynamodb:UpdateItem
+        - dynamodb:Scan
+      Resource:
+        - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/bookings
+        - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/rooms
 
 functions:
   createBooking:
@@ -15,6 +26,7 @@ functions:
       - httpApi:
           path: /bookings
           method: post
+          cors: true # Om du behöver tillåta CORS
 
   getBooking:
     handler: handler.getBooking
@@ -22,6 +34,7 @@ functions:
       - httpApi:
           path: /bookings/{id}
           method: get
+          cors: true
 
   cancelBooking:
     handler: handler.cancelBooking
@@ -29,6 +42,7 @@ functions:
       - httpApi:
           path: /bookings/{id}/cancel
           method: delete
+          cors: true
 
   updateBooking:
     handler: handler.updateBooking
@@ -36,6 +50,7 @@ functions:
       - httpApi:
           path: /bookings/{id}
           method: put
+          cors: true
 
   listBookings:
     handler: handler.listBookings
@@ -43,6 +58,7 @@ functions:
       - httpApi:
           path: /bookings
           method: get
+          cors: true
 
   listRooms:
     handler: handler.listRooms
@@ -50,9 +66,7 @@ functions:
       - httpApi:
           path: /rooms
           method: get
-
-plugins:
-  - serverless-offline
+          cors: true
 
 resources:
   Resources:
@@ -62,8 +76,6 @@ resources:
         TableName: bookings
         AttributeDefinitions:
           - AttributeName: bookingId
-            AttributeType: S
-          - AttributeName: roomType
             AttributeType: S
         KeySchema:
           - AttributeName: bookingId
@@ -85,3 +97,10 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
+
+plugins:
+  - serverless-offline # Om du vill köra lokala tester
+
+custom:
+  serverless-offline:
+    httpPort: 3000 # Port för serverless offline
