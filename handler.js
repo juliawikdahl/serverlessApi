@@ -37,7 +37,7 @@ module.exports.createBooking = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ message: 'Invalid room type or guest count' }) };
     }
 
-    // Calculate total price
+    
     const numberOfNights = Math.ceil((new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24));
     const totalPrice = ROOM_PRICES[roomType] * numberOfNights;
 
@@ -58,7 +58,7 @@ module.exports.createBooking = async (event) => {
     const command = new PutItemCommand(params);
     await dynamoDbClient.send(command);
 
-    // Return the full booking details including totalPrice
+  
     return {
       statusCode: 201,
       body: JSON.stringify({
@@ -97,7 +97,7 @@ module.exports.getBooking = async (event) => {
       return { statusCode: 404, body: JSON.stringify({ message: 'Booking not found' }) };
     }
 
-    // Transform DynamoDB item to a more readable format
+  
     const booking = {
       bookingId: result.Item.bookingId ? result.Item.bookingId.S : null,
       roomType: result.Item.roomType ? result.Item.roomType.S : null,
@@ -175,7 +175,7 @@ module.exports.updateBooking = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ message: 'Invalid room type or guest count' }) };
     }
 
-    // Calculate new total price
+   
     const numberOfNights = Math.ceil((new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24));
     const totalPrice = ROOM_PRICES[roomType] * numberOfNights;
 
@@ -196,7 +196,7 @@ module.exports.updateBooking = async (event) => {
     const command = new UpdateItemCommand(params);
     const result = await dynamoDbClient.send(command);
 
-    // Return the updated booking details
+   
     return {
       statusCode: 200,
       body: JSON.stringify({
