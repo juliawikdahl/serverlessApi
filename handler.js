@@ -233,16 +233,3 @@ module.exports.listBookings = async () => {
   }
 };
 
-module.exports.listRooms = async () => {
-  try {
-    const params = { TableName: 'rooms' };
-
-    const command = new ScanCommand(params);
-    const result = await dynamoDbClient.send(command);
-
-    return { statusCode: 200, body: JSON.stringify(result.Items) };
-  } catch (error) {
-    console.error('Error listing rooms:', error);
-    return { statusCode: 500, body: JSON.stringify({ message: 'Internal server error' }) };
-  }
-};

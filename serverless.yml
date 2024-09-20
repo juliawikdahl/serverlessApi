@@ -1,6 +1,6 @@
-service: bonz-booking-api # Namn på tjänsten
+service: bonz-booking-api
 
-frameworkVersion: '3' # Specificera versionen av Serverless Framework
+frameworkVersion: '3' 
 
 provider:
   name: aws
@@ -17,7 +17,6 @@ provider:
         - dynamodb:Scan
       Resource:
         - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/bookings
-        - arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/rooms
 
 functions:
   createBooking:
@@ -60,14 +59,6 @@ functions:
           method: get
           cors: true
 
-  listRooms:
-    handler: handler.listRooms
-    events:
-      - httpApi:
-          path: /rooms
-          method: get
-          cors: true
-
 resources:
   Resources:
     BookingsTable:
@@ -79,20 +70,6 @@ resources:
             AttributeType: S
         KeySchema:
           - AttributeName: bookingId
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-
-    RoomsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: rooms
-        AttributeDefinitions:
-          - AttributeName: roomType
-            AttributeType: S
-        KeySchema:
-          - AttributeName: roomType
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 5
